@@ -182,7 +182,7 @@ function A(i, j) {
 
 
 ### 1.14
-
+![coin_tree](https://github.com/js-sicp/sicp/assets/58013476/cc85ad4a-5966-4a22-8f7a-1c1b14b8531e)
 
 공간 증가 차수 : 이진트리이므로 $\Theta(2^n)$
 단계 증가 차수 : 임의의 잔돈 n이 들어왔을 때 가장 작은 동전의 금액을 a라 하면 tree의 depth는 n/a가 되므로, $\Theta(n)$
