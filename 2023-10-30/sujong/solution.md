@@ -254,12 +254,31 @@ function times(a, b) {
 ```js
 function fast_times(a, b) {
 	return b === 1 
-	? a 
-	: is_even(b) 
-	? fast_times(double(a), halve(b)) 
-	: a + fast_times(a, b - 1);
+		? a 
+		: is_even(b) 
+		? fast_times(double(a), halve(b)) 
+		: a + fast_times(a, b - 1);
 }
 ```
+
+라고 당당하게 풀고 나니 a + fast_times(a, b - 1) 표현식 때문에 틀린 답이었다. 아래는 수정한 답
+
+```js
+function fast_times(a, b) {
+	function fast_times_iter(p, a, b) {
+		return b === 1
+			? p + a
+			: a === 0 || b === 0
+			? 0
+			: is_even(b)
+			? fast_times_iter(p, double(a), halve(b)
+			: fast_times_iter(p + a, a, b - 1);
+	}
+
+	return fast_times_iter(0, a, b);
+}
+```
+
 
 ### 1.19
 $$
