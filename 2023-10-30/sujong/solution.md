@@ -271,7 +271,7 @@ function fast_times(a, b) {
 			: a === 0 || b === 0
 			? 0
 			: is_even(b)
-			? fast_times_iter(p, double(a), halve(b)
+			? fast_times_iter(p, double(a), halve(b))
 			: fast_times_iter(p + a, a, b - 1);
 	}
 
