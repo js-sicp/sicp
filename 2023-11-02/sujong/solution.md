@@ -255,3 +255,185 @@ function is_prime(n) {
 }
 ```
 진욱님의 갓갓 증명으로 square_with_check 완성
+
+
+### 1.29
+#### Simpsons's Rule
+일반적인 구분구적법보다 좀 더 정확한 수치 적분법으로 Simpson's Rule(심프슨 법칙)이 있는데, a와 b 사이의 함수 f의 적분을 다음과 같이 근사한다.
+
+$$
+\frac{h}{3}[{y_{0} + 4y_{1} + 2y_{2} + \cdots + 4y_{n - 1} + y_n}]
+$$
+$h = (b - a) / n$ 이고, $y_k=f(a+kh)$ 일 때 f, a, b, n을 인수로 받고 심슨 근사법으로 적분하는 함수는 다음과 같다.
+
+```js
+function inc(k) {
+	return k + 1;
+}
+
+function simpson_integral(f, a, b, n) {
+	function helper(h) {
+		function y(k) {
+			return f(a + k * h);
+		}
+		function term(k) {
+			return k === 0 || k === n
+				? y(k)
+				: k % 2 === 0
+				? 2 * y(k)
+				: 4 * y(k);
+		}
+		return sum(term, 0, inc, n) * h / 3;
+	}
+	return helper((b - a) / n);
+}
+```
+솔루션을 보고 배낀거라 외우겠습니다. ㅋㅋㅋ
+
+
+### 1.30
+```js
+function sum(term, a, next, b) {
+	function iter(a, result) {
+		return a > b
+			? result
+			: iter(next(a), term(a) + result);
+	}
+	return iter(a, 0);
+}
+```
+
+
+### 1.31
+월리스 곱(Wallis Product)의 한 형태로 $\pi$의 무한 곱 표현식이다. 문제에서 주어진 식이 나오게 된 배경에 대한 증명은 다음과 같다.(tmi : 참고로 월리스는 무한대 기호를 처음으로 쓴 뉴턴보다 선배인 엄청난 수학자이다)
+
+#### 1) $I_n = \int_{0}^{\frac{\pi}{2}}{\sin^{n}{x}dx}$, $I_{2n} = \frac{n - 1}{n}{I_{n - 2}}$
+
+부분적분을 활용해 다음 관계식을 보일 수 있다.
+$$
+\begin{array}{ccccl}
+& I_n & = & \int_{\frac{\pi}{2}}^{0}{\sin^{n}{x}}{dx} & = & [-\cos{x}\sin^{n - 1}{x}]_{0}^{\frac{\pi}{2}} + (n - 1)\cdot \int_{0}^{\frac{\pi}{2}}{\cos^{2}{x}\sin^{n - 2}{x}dx}\\
+&&&&&(n - 1)\cdot\int_{0}^{\frac{\pi}{2}}(1 - \sin^2{x})\sin^{n - 2}{x}dx\\
+&&&&&(n - 1)\cdot\int_{0}^{\frac{\pi}{2}}\sin^{n - 2}{x}dx - (n - 1)\cdot\int_{0}^{\frac{\pi}{2}}\sin^{n}{x}dx\\
+&&\Rightarrow &n\cdot\int_{0}^{\frac{\pi}{2}}\sin^{n}{x}dx & = & (n - 1)\cdot\int_{0}^{\frac{\pi}{2}}\sin^{n - 2}{x}dx\\
+\\
+&&\therefore I_n & = \int_{\frac{\pi}{2}}^{0}{\sin^{n}{x}}{dx} &= &\frac{n - 1}{n}\int_{\frac{\pi}{2}}^{0}{\sin^{n - 2}{x}}{dx} = \frac{n - 1}{n}I_{n - 2}
+\end{array}
+$$
+
+#### 2) $I_{2n}$, $I_{2n + 1}$의 값
+
+위의 관계식으로부터 각 식을 계산해보면 다음과 같다.
+##### $I_{2n}$
+$$
+\begin{array}{ccl}
+I_{2n} = \frac{2n - 1}{2n}I_{2n - 2} = \frac{2n - 1}{2n}\cdot\frac{2n - 3}{2n - 2}I_{2n - 4} = \cdots = \frac{2n - 1}{2n}\cdot\frac{2n - 3}{2n - 2} \cdots \cdot \frac{1}{2}\cdot I_0\\
+\\
+I_0 = \int_{0}^{\frac{\pi}{2}}{1}dx = \frac{\pi}{2}\\
+\\
+\therefore I_{2n} = \frac{2n - 1}{2n}\cdot\frac{2n - 3}{2n - 2} \cdots \cdot \frac{1}{2}\cdot \frac{\pi}{2}
+\end{array}
+$$
+
+##### $I_{2n + 1}$
+$$
+\begin{array}{ccl}
+I_{2n + 1} = \frac{2n}{2n + 1}I_{2n - 1} = \frac{2n}{2n + 1}\cdot\frac{2n - 2}{2n - 1}I_{2n - 3} = \cdots = \frac{2n}{2n + 1}\cdot\frac{2n - 2}{2n - 1} \cdots \cdot \frac{2}{3}\cdot I_1\\
+\\
+I_1 = \int_{0}^{\frac{\pi}{2}}{\sin{x}}dx = 1\\
+\\
+\therefore I_{2n + 1} = \frac{2n}{2n + 1}\cdot\frac{2n - 2}{2n - 1} \cdots \cdot \frac{2}{3}\cdot 1
+\end{array}
+$$
+
+
+#### 3) $\lim_{n\to\infty} \frac{I_{2n}}{I_{2n+1}} = 1$
+
+$\sin{x}$ 는 0과 $\frac{\pi}{2}$ 사이에서 항상 1보다 작기 때문에 $\sin^{n + 1}{x}$의 적분 값은 $\sin^{n}{x}$의 적분 값보다 항상 작을수밖에 없다. 따라서 다음 관계식이 성립한다.
+$$
+\begin{array}{ccc}
+\sin^{n + 1}{x} \leq \sin^{n}{x} \Rightarrow \int_{0}^{\frac{\pi}{2}}\sin^{n + 1}{x}dx \leq \int_{0}^{\frac{\pi}{2}}\sin^{n}{x}dx\\
+\\
+\therefore I_{n + 1} \leq I_{n}
+\end{array}
+$$
+
+위 관계식을 활용하면 $I_{2n}$, $I_{2n + 1}$ 사이의 비의 범위를 다음과 같이 한정할 수 있다.
+
+$$
+I_{2n + 1} \leq I_{2n} \Rightarrow 1\leq \frac{I_{2n}}{I_{2n + 1}}\leq \frac{I_{2n - 1}}{I_{2n + 1}} = \frac{2n + 1}{2n}
+$$
+
+샌드위치 정리에 의해 다음과 같이 극한값을 구할 수 있다.
+
+$$
+\lim_{n \to \infty}{\frac{I_{2n}}{I_{2n + 1}}} = 1
+$$
+
+#### 4) $\frac{\pi}{4} = \frac{2\cdot4\cdot4\cdot6\cdot6\cdot8\cdots}{3\cdot3\cdot5\cdot5\cdot7\cdot7\cdots}$
+
+n에 대한 표현식 $A_n$ 을 다음과 같이 정의해보자.
+
+$$
+A_n = \frac{2\cdot4\cdot4\cdot6\cdot \cdots \cdot (2n)\cdot(2n - 2)}{3\cdot3\cdot5\cdot5\cdot \cdots \cdot (2n - 1)\cdot(2n-1)}
+$$
+
+앞서 극한값을 계산한 $I_{2n}$, $I_{2n + 1}$ 사이의 비를 다음과 같이 쓸 수 있다.
+
+$$
+\begin{array}{ccc}
+\frac{I_{2n}}{I_{2n + 1}} = \frac{\frac{3}{4}}{\frac{2}{3}}\cdot\frac{\frac{5}{6}}{\frac{4}{5}} \cdot \cdots \cdot \frac{\frac{2n - 1}{2n}}{\frac{2n-2}{2n - 1}}\cdot \frac{1}{\frac{2n}{2n+1}}\cdot \frac{\pi}{4}\\
+\\
+\frac{I_{2n}}{I_{2n + 1}} \cdot A_n \cdot \frac{2n}{2n + 1} = \frac{\pi}{4}\\
+\\
+\Rightarrow \lim_{n \to \infty}{\frac{I_{2n}}{I_{2n + 1}} \cdot A_n \cdot \frac{2n}{2n + 1}} = \lim_{n \to \infty}{A_n} = \frac{\pi}{4}
+\end{array}
+$$
+
+따라서 문제에서 주어진 식과 같이 pi를 무한 곱으로 표현할 수 있다.
+
+$$
+\therefore \frac{\pi}{4} = \frac{2\cdot4\cdot4\cdot6\cdot6\cdot8\cdots}{3\cdot3\cdot5\cdot5\cdot7\cdot7\cdots}
+$$
+
+#### a) product
+
+```js
+function product (term, a, next, b) {
+	return a > b
+		? 1
+		: term(a) * product(term, next(a), next, b);
+}
+```
+
+다음 함수를 활용해 $\pi$의 근사값을 계산해 보았다.
+
+```js
+function pi() {
+	function term(n) {
+		return ((2 * n) * (2 * n + 2)) / ((2 * n + 1) * (2 * n + 1));
+	}
+	function next(n) {
+		return n + 1;
+	}
+	return 4 * product(term, 1, next, 5000);
+}
+
+pi(); // 3.141749705738071
+```
+
+
+#### b) 재귀적 과정과 반복적 과정
+
+반복적 과정의 product
+
+```js
+function product(term, a, next, b) {
+	function iter(a, result) {
+		return a > b
+			? result
+			: iter(next(a), term(a) * result);
+	}
+	return iter(a, 1);
+}
+```
