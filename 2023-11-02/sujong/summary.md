@@ -130,3 +130,83 @@ function sum(term, a, next, b) {
 		: term(a) + sum(term, next(a), next, b);
 }
 ```
+
+위 함수를 활용해 1에서 10까지의 정수들의 세제곱의 합을 구할 수 있다.
+
+```js
+function cube (n) {
+	return n * n * n;
+}
+
+function inc (n) {
+	return n + 1;
+}
+
+function sum_cubes(a, b) {
+	return sum(cube, a, inc, b);
+}
+```
+
+### (optional) pi sum
+tan 함수의 역함수인 arctan를 활용하면 pi(pi/4)의 값을 다음과 같이 구할 수 있다.
+
+$$
+\tan{\frac{\pi}{4}} = 1 \rightarrow \arctan{1} = \frac{\pi}{4}
+$$
+
+arctan는 미분했을 때 분수 식으로 표현되며 이를 이용해 다음과 같이 pi/4를 계산할 수 있다.
+
+$$
+\begin{array}{ccl}
+&\frac{d}{dx} \arctan{x} & =  &\frac{1}{1 + x^2} \\
+& \int_{0}^{1}{\frac{dx}{1 + x^2}} & = & \int_{0}^{1}{\frac{d}{dx}\arctan{x}} dx \\
+& & = & arctan{1} - arctan{0} & = \frac{\pi}{4}
+\end{array}
+$$
+
+위 식에서 $\frac{1}{1 + x^2}$ 부분은 이항정리를 통해 다음과 같이 정리할 수 있다.
+
+$$
+\begin{array}{cccll}
+&&(1 + x)^n &= &1 + nx + \frac{n(n-1)}{2!}x^2 + \frac{n(n - 1)(n - 2)}{3!}x^3 + \cdots \\
+&&\frac{1}{1 + x^2} &= &(1 + x^2)^{-1} = 1 - x^2 + x^4 - x^6 + x^8 - \cdots \\
+& \therefore & \int_{0}^{1}{\frac{dx}{1 + x^2}}  &= &\int_{0}^{1}{1 - x^2 + x^4 - x^6 + x^8 + \cdots}dx \\
+&&&= &[ 1 - \frac{1}{3}x^3 + \frac{1}{5}x^5 - \cdots ]_{0}^{1}\\
+&&&= &(1 - \frac{1}{3}) + (\frac{1}{5} - \frac{1}{7})+ \cdots\\
+&&&= &\frac{2}{1\cdot3} + \frac{2}{6\cdot7} + \cdots\\
+&\therefore &\frac{\pi}{8} &= &\frac{1}{1\cdot3} + \frac{1}{5\cdot7} \cdots
+\end{array}
+$$
+
+위 식을 이용해 아래 pi를 구하는 pi_sum 함수를 구현할 수 있다.
+
+```js
+function pi_sum(a, b) {
+	function pi_term(n) {
+		return 1 / (n * (n + 2));
+	}
+	function pi_next(n) {
+		return n + 4;
+	}
+	return sum(pi_term, a, pi_next, b);
+}
+```
+
+
+### 구분구적법을 활용한 적분의 근사
+
+$$
+\int_{a}^{b}{f} = \left[  f( a + \frac{dx}{2}) + f(a + dx + \frac{dx}{2}) + \cdots \right]dx
+$$
+
+이를 함수로 표현하면 다음과 같다.
+
+```js
+function integral(f, a, b, dx) {
+	function add_dx(x) {
+		return x + dx;
+	}
+	return sum(f, a + dx / 2, add_dx, b) * dx;
+}
+```
+
