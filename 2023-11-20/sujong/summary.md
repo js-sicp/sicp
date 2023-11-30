@@ -66,3 +66,35 @@ function append(list1, list2) {
 ```
 
 
+### 목록 매핑
+
+목록에 대한 유용한 연산 중 하나로 각 요소에 어떠한 변환을 적용한 결과들로 새로운 목록을 만드는 연산이 있다. 다음과 같이 head에 연산을 적용하고 tail을 재귀적으로 호출함으로써 모든 
+요소들에 연산이 적용되도록 할 수 있다.
+
+```js
+function scale_list(items, factor) {
+    return is_null(items)
+        ? null
+        : pair(head(items) * factor, tail(items));
+}
+```
+
+이러한 고수준 연산으로 map 함수가 있으며 다음과 같이 만들 수 있다.
+
+```js
+function map(fun, items) {
+    return is_null(items)
+        ? null
+        : pair(fun(head(items)), map(fun, tail(items)));
+}
+```
+
+이를 활용해 scale_list 함수를 다음과 같이 작성할 수 있다.
+
+```js
+function scale_list(items, factor) {
+    return map(x => x * factor, items);
+}
+```
+
+> 이렇게 작성했을 때 
