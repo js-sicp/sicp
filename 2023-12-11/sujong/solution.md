@@ -2,7 +2,7 @@
 
 ```js
 function map(f, sequence) {
-	return accumulate((x, y) => f(x, y), null, sequence);
+	return accumulate((x, y) => pair(f(x), y), null, sequence);
 }
 
 function append(seq1, seq2) {
@@ -50,3 +50,11 @@ function accumulate_n(op, init, seqs) {
 		: pair(accumulate(op, init, map((seq) => head(seq), seqs)), accumulate_n(op, init, map((seq) => tail(seq), seqs)));
 }
 ```
+
+### 2.37
+
+```js
+
+```
+
+
