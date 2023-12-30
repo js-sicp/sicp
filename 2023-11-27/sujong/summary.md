@@ -11,8 +11,25 @@ tree의 leaf node의 개수를 세는 방법은 다음과 같다.
 코드는 다음과 같다.
 
 ```js
+function pair(a, b) {
+    function dispatch(m) {
+        return m === 0 ? a : m === 1 ? b : console.error("invalid value for pair");
+    }
+    return dispatch;
+}
+
+function head(p) {
+    return p(0);
+}
+
+function tail(p) {
+    return p(1);
+}
+
 function is_pair(item) {
-	return !is_null(head(item)) && !is_null(tail(item));
+    return (
+        typeof item === "function" && item(0) !== undefined && item(1) !== undefined
+    );
 }
 
 function count_leaves(x) {
@@ -23,7 +40,3 @@ function count_leaves(x) {
 		: count_leaves(head(x)) + count_leaves(tail(x));
 }
 ```
-
-
-## 2.2.3 합의된 인터페이로서의 순차열
-
