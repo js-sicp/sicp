@@ -1,3 +1,73 @@
+# 2.1 데이터 추상화
+
+> **데이터 추상화**
+>
+> 프로그램에서 데이터 객체의 표현을 다루는 부분과 그러한 객체를 실제로 활용하는 부분을 분리하는 개념의 설계 방법론
+
+- 복합 데이터를 이용하면 프로그램의 모듈성(modularity)도 높일 수 있음
+- 높아진 모듈성을 통해 프로그램의 설계와 유지보수, 수정이 훨씬 쉬워짐
+- 언어의 표현력이 높아짐
+
+## 2.1.1 예제: 유리수 산술 연산
+
+> 희망적 사고(wishful thinking) : 사용할 수 있는 함수들이 그냥 잘 작동할 것이라고 희망적으로 생각하고 넘어가는 강력한 합성(synthesis) 전략(?)
+
+우리는 유리수의 산술 연산이 **make_rat(n, d)**, **numer(x)**, **denom(x)** 세 함수를 통해 (희망적 사고를 했을 때) 다음과 같이 구현할 수 있다.
+
+```js
+function add_rat(x, y) {
+	return make_rat(numer(x) * denom(y) + numer(y) * denom(x), denom(x) * denom(y));
+}
+
+function sub_rat(x, y) {
+	return make_rat(numer(x) * denom(y) - numer(y) * denom(x), denom(x) * denom(y));
+}
+
+function mul_rat(x, y) {
+	return make_rat(numer(x) * numer(y), denom(x) * denom(y));
+}
+
+function div_rat(x, y) {
+	return make_rat(numer(x) * denom(y), denom(x) * numer(y));
+}
+
+function equal_rat(x, y) {
+	return numer(x) * denom(y) === numer(y) * denom(x);
+}
+```
+
+### 쌍 자료 구조
+
+**pair**, **head**, **tail**을 통해 데이터를 표현하는 방식으로, 쌍 객체들로 만든 데이터 객체를 목록 구조 데이터(list-structured data)라고 부름
+
+쌍 자료 구조를 활용하면 앞선 make_rat, numer, denom을 간단하게 표현할 수 있다.
+
+```js
+function make_rat(n, d) {
+	return pair(n, d);
+}
+
+function numer(x) {
+	return head(x);
+}
+
+function denom(x) {
+	return tail(x);
+} 
+```
+
+또한 위의 유리수는 약분을 하지 않은 채로 구현되어있는데, 다음과 같이 make_rat 함수를 수정하여 최대공약수를 구하여 항상 기약분수가 되도록 만들수도 있다.
+
+```js
+function make_rat(n, d) {
+	const g = gcd(n, d);
+	return pair(n / g, d / g);
+}
+```
+
+> 데이터 구현과 사용 영역을 독립적으로 구별해놨기 때문에 앞선 기약분수 문제는 연산 함수를 수정하지 않고 데이터 표현 부분만 수정하여 해결할 수 있었다!!!
+
+
 ## 2.1.2 추상화 장벽
 
 데이터 추상화란, 데이터 객체 형식과 그 형식에 관한 모든 조작을 표현하는 연산으로 구성하는 것을 말한다.
