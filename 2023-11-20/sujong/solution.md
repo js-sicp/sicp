@@ -98,10 +98,71 @@ console.log(brooks_curried(list3)); // 7
 ```
 
 ### 2.21
+```js
+function square_list(items) {
+	return is_null(items)
+		? null
+		:pair(square(head), square_list(tail(items)));
+}
 
-
+function square_list(items) {
+	return map(square, items);
+}
+```
 
 
 ### 2.22
 
+```js
+function square_list(items) {
+	function iter(things, answer) {
+		return is_null(things)
+			? answer
+			: iter(tail(things),
+				pair(square(head(things)),
+					answer)
+			);
+	}
+	return iter(items, null);
+}
+
+const l = list(1, 2, 3, 4, 5);
+square_list(l); // [1, [4, [9, [16, [25, null]]]]]
+```
+
+위의 square_list 함수는 제곱된 head가 처음에 null이었던 answer의 head로 계속해서 붙어나가기 때문에 요소들이 역순인 목록을 돌려주게 된다.
+만약 이를 위해 pair의 인수들을 맞바꾸게 되면,
+
+```js
+function square_list(items) {
+	function iter(things, answer) {
+		return is_null(things)
+			? answer
+			: iter(tail(things),
+				pair(answer,
+					square(head(things)))
+			);
+	}
+	return iter(items, null);
+}
+
+const l = list(1, 2, 3, 4, 5);
+square_list(l); // [[[[[null, 25], 16], 9], 4], 1]
+```
+
+위의 주석과 같이 이상한 목록이 생성된다.
+
+
 ### 2.23
+
+```js
+function for_each(func, items) {
+	if (is_null(items)) {
+		return undefined;
+	} else {
+		func(head(items));
+		for_each(func, tail(items));
+	}
+}
+```
+
