@@ -276,9 +276,59 @@ function deriv(exp, variable) {
 
 // TODO : list 중첩이 있는 경우 deriv 조건식에서 걸러지지 않는데 이 부분 해결할 것
 
+
 ### 2.59
 
+set1을 순회하며 set2 집합에 adjoin하면 union을 구할 수 있다.
+
+```js
+function union_set(set1, set2) {
+	return is_null(set1)
+		? set2
+		: is_element_of_set(head(set1), set2)
+		? union_set(tail(set1), set2)
+		: pair(head(set1), union_set(tail(set1), set2));
+}
+```
+
+
 ### 2.60
+
+중복을 허용하는 경우 각 함수들은 다음과 같다.
+
+```js
+function is_element_of_set(x, set) {
+	return is_null(set)
+		? false
+		: equal(x, head(set))
+		? true
+		: is_element_of_set(x, tail(set));
+}
+
+function adjoin_set(x, set) {
+	return pair(x, set);
+}
+
+function intersection_set(set1, set2) {
+	return is_null(set1) || is_null(set2)
+		? null
+		: is_element_of_set(head(set1), set2)
+		? pair(head(set1), intersection_set(tail(set1), set2))
+		: intersection_set(tail(set1), set2);
+}
+
+function union_set(set1, set2) {
+	return is_null(set1)
+		? set2
+		: pair(head(set1), union_set(tail(set1), set2));
+}
+```
+
+- is_element_of_set : set의 사이즈에 비례하기 때문에 O(m + n)으로 동일(하지만 실제 시간은 더 오래 걸릴 것)
+- adjoin_set : 체크 과정에서 생기던 O(n) 시간에서 바로 추가만 하면 되기 때문에 O(1)로 매울 효율적임
+- intersection_set : O(n x m)으로 동일
+- union_set : 체크 없이 추가만 하기 때문에 O(n)으로 효율이 높아짐
+
 
 ### 2.61
 

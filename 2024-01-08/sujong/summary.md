@@ -136,8 +136,53 @@ function make_product(m1, m2) {
 
 
 ## 2.3.3 예제: 집합의 표현
-// TODO
+> 집합 : 서로 다른 객체들을 모아둔 것
+> 
+> is_element_of_set : 집합과 객체를 인수로 받아, 객체가 집합의 원소인지 아닌지를 판별
+> 
+> adjoin_set : 집합과 객체를 인수로 받아, 객체가 집합의 원소가 아니면 집합에 추가한 새로운 집합을 반환
+> 
+> union_set : 두 집합을 인수로 받아, 두 집합의 합집합을 반환
+> 
+> intersection_set : 두 집합을 인수로 받아, 두 집합의 교집합을 반환
+
+위의 조건에 맞게 작동하도록 구현하기만 한다면 그 어떤 표현도 집합으로 취급할 수 있다.
+
 ### 순서 없는 목록으로 표현한 집합
+
+일상적인 의미의 집합을 "서로 다른 객체들을 모아둔 것"이라 한다면 다음과 같이 집합을 표현할 수 있다.
+
+```js
+function equal(x, y) {
+	return is_pair(x) && is_pair(y)
+		? equal(head(x), head(y)) && equal(tail(x), tail(y))
+		: x === y;
+}
+
+function is_element_of_set(x, set) {
+	return is_null(set)
+		? false
+		: equal(x, head(set))
+		? true
+		: is_element_of_set(x, tail(set));
+}
+
+function adjoin_set(x, set) {
+	return is_element_of_set(x, set)
+		? set
+		: pair(x, set);
+}
+
+function intersection_set(set1, set2) {
+	return is_null(set1) || is_null(set2)
+		? null
+		: is_element_of_set(head(set1), set2)
+		? pair(head(set1), intersection_set(tail(set1), set2))
+		: intersection_set(tail(set1), set2);
+}
+```
+
+표현 설계의 문제 중 하나는 효율성이다. 위의 집합 연산들 중 is_element_of_set의 속도가 전체적인 집합 구현의 효율성에 큰 영향을 미치게 되는 것을 확인할 수 있다.
 
 
 ### 순서 있는 목록으로 표현한 집합
