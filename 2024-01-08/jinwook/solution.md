@@ -183,6 +183,8 @@ function adjoin_set(x, set) {
 function union_set(set1, set2) {
   return is_null(set1)
     ? set2
+    : is_null(set2)
+    ? set1
     : head(set1) === head(set2)
     ? pair(head(set1), union_set(tail(set1), tail(set2)))
     : head(set1) < head(set2)
@@ -199,5 +201,8 @@ function union_set(set1, set2) {
 - 트리 내에서 가장 작은 수부터 순차적으로 나열한다.
 
 ## b
+
+- 트리를 두 함수 모두 1번만 순회한다.
+- 공간 복잡도에서 tree_to_list_1이 더 크다. 모르겠다..
 
 # 2.64
