@@ -332,9 +332,46 @@ function union_set(set1, set2) {
 
 ### 2.61
 
+is_element_of_set과 동일한 방식으로 풀 수 있다.
+
+```js
+function adjoin_set(x, set) {
+	return is_null(set)
+		? pair(x, null)
+		: x === head(set)
+		? set
+		: x < head(set)
+		? pair(x, set)
+		: pair(head(set), adjoin_set(x, tail(set)));
+}
+```
+
+
 ### 2.62
+
+```js
+function union_set(set1, set2) {
+	if(is_null(set1)) {
+		return set2;
+	} else if(is_null(set2)) {
+		return set1;
+	} else {
+		const x1 = head(set1);
+		const x2 = head(set2);
+		return x1 === x2
+			? pair(x1, union_set(tail(set1), tail(set2)))
+			: x1 < x2
+			? pair(x1, union_set(tail(set1), set2))
+			: pair(x2, union_set(set1, tail(set2)));
+	}
+}
+```
+
 
 ### 2.63
 
+
 ### 2.64
+
+
 ### 2.65
