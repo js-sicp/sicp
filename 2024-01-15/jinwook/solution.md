@@ -117,21 +117,21 @@ display(decode(sample_message, sample_tree));
 # 2.68
 
 ```js
-function encode_symbol(symbol, tree) {
-  function hi(current_tree, encoded) {
-    return is_leaf(current_tree)
-      ? null
-      : is_leaf(left_branch(current_tree)) &&
-        symbol_leaf(left_branch(current_tree)) === symbol
-      ? append(encoded, list(0))
-      : is_leaf(right_branch(current_tree)) &&
-        symbol_leaf(right_branch(current_tree)) === symbol
-      ? append(encoded, list(1))
-      : hi(left_branch(current_tree), append(encoded, list(0))) ||
-        hi(right_branch(current_tree), append(encoded, list(1)));
-  }
+function hasSymbol(symbol, tree) {
+  return is_leaf(tree)
+    ? symbol_leaf(tree) === symbol
+    : hasSymbol(symbol, left_branch(tree)) ||
+        hasSymbol(symbol, right_branch(tree));
+}
 
-  return hi(tree, list());
+function encode_symbol(symbol, tree) {
+  return is_null(tree)
+    ? null
+    : hasSymbol(symbol, left_branch(tree))
+    ? pair(1, encode_1(symbol, left_branch(tree)))
+    : hasSymbol(symbol, right_branch(tree))
+    ? pair(0, encode_1(symbol, right_branch(tree)))
+    : throw error("invalid symbol");
 }
 ```
 
@@ -171,8 +171,6 @@ const pairs = list(
 function generate_huffman_tree(pairs) {
   return successive_merge(make_leaf_set(pairs));
 }
-
-generate_huffman_tree(pairs);
 
 display(encode(list("Get", "a", "job"), generate_huffman_tree(pairs)));
 ```
@@ -231,3 +229,10 @@ put("derive", "exp", exp);
 ## d
 
 - put으로 넣어주는 부분의 순서를 get과 동일하게 변경해주면 된다.
+
+# 2.74
+
+## a
+
+- get_record 함수에 대한 key값을 정의하고, 개별 부서의 파일은 해당 key값에 대응되는 함수를 작성한다.
+- 예시로 key값을 record라고 한다면, 개별 부서의 파일은 record를 키값으로 등록한 함수를 정의해야한다. 그리고 해당 함수는 인사 파일에서 주어진 이름의 직원 레코드를 찾아 돌려준다.
